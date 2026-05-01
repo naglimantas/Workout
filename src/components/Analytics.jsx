@@ -8,7 +8,7 @@ import { WORKOUT_PLAN } from '../data/workoutPlan.js'
 const ALL_EXERCISES = WORKOUT_PLAN.days.flatMap((d) => d.exercises)
 
 const CHART_COLORS = {
-  weight: '#dc2626',
+  weight: '#8b0000',
   reps: '#38bdf8',
   orm: '#f59e0b',
 }
@@ -247,7 +247,7 @@ function MiniStat({ label, val, unit }) {
 
 function PRCard({ label, val, unit }) {
   return (
-    <div style={{ textAlign: 'center', background: 'rgba(220,38,38,0.06)', borderRadius: 6, padding: '10px 4px', border: '1px solid rgba(220,38,38,0.22)' }}>
+    <div style={{ textAlign: 'center', background: 'rgba(139,0,0,0.12)', borderRadius: 6, padding: '10px 4px', border: '1px solid rgba(139,0,0,0.30)' }}>
       <div style={{ fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 700, color: 'var(--accent)' }}>
         {val}{unit}
       </div>

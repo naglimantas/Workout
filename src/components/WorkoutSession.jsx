@@ -163,7 +163,7 @@ export default function WorkoutSession({ template, onEnd }) {
               }}
               style={{
                 width: '100%',
-                background: exCompleted ? 'rgba(220,38,38,0.06)' : 'var(--card)',
+                background: exCompleted ? 'rgba(139,0,0,0.10)' : 'var(--card)',
                 border: `1px solid ${exCompleted ? 'var(--accent)' : isExpanded ? 'var(--accent-dim)' : 'var(--border)'}`,
                 borderRadius: isExpanded ? '8px 8px 0 0' : 8,
                 padding: '12px 14px',

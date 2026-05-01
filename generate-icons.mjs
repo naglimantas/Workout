@@ -1,62 +1,39 @@
-// Generates pwa-192x192.png, pwa-512x512.png and apple-touch-icon.png
-// Uses only Node built-ins — no extra dependencies needed.
-import { deflateSync } from 'zlib'
-import { writeFileSync, mkdirSync } from 'fs'
-
-function makeCRCTable() {
-  const t = new Uint32Array(256)
-  for (let n = 0; n < 256; n++) {
-    let c = n
-    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1
-    t[n] = c
-  }
-  return t
-}
-const CRC = makeCRCTable()
-function crc32(buf) {
-  let c = 0xffffffff
-  for (let i = 0; i < buf.length; i++) c = (c >>> 8) ^ CRC[(c ^ buf[i]) & 0xff]
-  return (c ^ 0xffffffff) >>> 0
-}
-function chunk(type, data) {
-  const len = Buffer.alloc(4)
-  len.writeUInt32BE(data.length)
-  const t = Buffer.from(type, 'ascii')
-  const crcBuf = Buffer.alloc(4)
-  crcBuf.writeUInt32BE(crc32(Buffer.concat([t, data])))
-  return Buffer.concat([len, t, data, crcBuf])
-}
-
-function makePNG(size, r, g, b) {
-  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
-
-  const ihdr = Buffer.alloc(13)
-  ihdr.writeUInt32BE(size, 0)
-  ihdr.writeUInt32BE(size, 4)
-  ihdr[8] = 8 // bit depth
-  ihdr[9] = 2 // RGB
-
-  const row = Buffer.alloc(1 + size * 3) // filter byte + RGB per pixel
-  for (let x = 0; x < size; x++) {
-    row[1 + x * 3] = r
-    row[1 + x * 3 + 1] = g
-    row[1 + x * 3 + 2] = b
-  }
-  const raw = Buffer.concat(Array.from({ length: size }, () => row))
-
-  return Buffer.concat([
-    sig,
-    chunk('IHDR', ihdr),
-    chunk('IDAT', deflateSync(raw)),
-    chunk('IEND', Buffer.alloc(0)),
-  ])
-}
+// Generates app icons from an SVG dumbbell design using sharp.
+// Requires: npm install -D sharp
+import sharp from 'sharp'
+import { mkdirSync } from 'fs'
 
 mkdirSync('public', { recursive: true })
 
-// Dark red (#dc2626 = 220, 38, 38) — matches the app accent colour
-writeFileSync('public/pwa-192x192.png', makePNG(192, 220, 38, 38))
-writeFileSync('public/pwa-512x512.png', makePNG(512, 220, 38, 38))
-writeFileSync('public/apple-touch-icon.png', makePNG(180, 220, 38, 38))
+// Dumbbell icon — dark red on near-black, rounded square
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0d0d0d"/>
+
+  <!-- Left plate -->
+  <rect x="64" y="168" width="76" height="176" rx="18" fill="#8b0000"/>
+  <!-- Left collar -->
+  <rect x="140" y="210" width="28" height="92" rx="7" fill="#5c0000"/>
+  <!-- Handle -->
+  <rect x="168" y="236" width="176" height="40" rx="10" fill="#8b0000"/>
+  <!-- Right collar -->
+  <rect x="344" y="210" width="28" height="92" rx="7" fill="#5c0000"/>
+  <!-- Right plate -->
+  <rect x="372" y="168" width="76" height="176" rx="18" fill="#8b0000"/>
+
+  <!-- Subtle highlight on left plate top edge -->
+  <rect x="64" y="168" width="76" height="8" rx="8" fill="#b03030" opacity="0.5"/>
+  <!-- Subtle highlight on right plate top edge -->
+  <rect x="372" y="168" width="76" height="8" rx="8" fill="#b03030" opacity="0.5"/>
+  <!-- Handle highlight -->
+  <rect x="168" y="236" width="176" height="6" rx="4" fill="#b03030" opacity="0.4"/>
+</svg>`
+
+const buf = Buffer.from(svg)
+
+await sharp(buf).resize(512, 512).png().toFile('public/pwa-512x512.png')
+await sharp(buf).resize(192, 192).png().toFile('public/pwa-192x192.png')
+await sharp(buf).resize(180, 180).png().toFile('public/apple-touch-icon.png')
+await sharp(buf).resize(32, 32).png().toFile('public/favicon.ico')
 
 console.log('Icons generated in /public')
