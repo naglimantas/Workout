@@ -26,7 +26,7 @@ export default function Home({ onStartWorkout }) {
               onClick={() => setSelectedDay(day.id)}
               style={{
                 background: selectedDay === day.id ? 'var(--accent)' : 'var(--card)',
-                color: selectedDay === day.id ? '#000' : 'var(--text)',
+                color: selectedDay === day.id ? '#fff' : 'var(--text)',
                 border: `1px solid ${selectedDay === day.id ? 'var(--accent)' : 'var(--border)'}`,
                 borderRadius: 6,
                 padding: '6px 14px',

@@ -54,9 +54,9 @@ function makePNG(size, r, g, b) {
 
 mkdirSync('public', { recursive: true })
 
-// Lime-green (#a3e635 = 163, 230, 53) — matches the app accent colour
-writeFileSync('public/pwa-192x192.png', makePNG(192, 163, 230, 53))
-writeFileSync('public/pwa-512x512.png', makePNG(512, 163, 230, 53))
-writeFileSync('public/apple-touch-icon.png', makePNG(180, 163, 230, 53))
+// Dark red (#dc2626 = 220, 38, 38) — matches the app accent colour
+writeFileSync('public/pwa-192x192.png', makePNG(192, 220, 38, 38))
+writeFileSync('public/pwa-512x512.png', makePNG(512, 220, 38, 38))
+writeFileSync('public/apple-touch-icon.png', makePNG(180, 220, 38, 38))
 
 console.log('Icons generated in /public')
